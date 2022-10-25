@@ -1,74 +1,59 @@
 <html>
+
 <head>
   <meta charset="utf-8">
-  <title>jsQR Demo</title>
+  <title>SORA POS</title>
   <script src="./jsQR.js"></script>
+  <!-- <script src="./modal.js"></script> -->
   <link href="https://fonts.googleapis.com/css?family=Ropa+Sans" rel="stylesheet">
-  <!-- <style>
-    body {
-      font-family: 'Ropa Sans', sans-serif;
-      color: #333;
-      max-width: 640px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    #githubLink {
-      position: absolute;
-      right: 0;
-      top: 12px;
-      color: #2D99FF;
-    }
-
-    h1 {
-      margin: 10px 0;
-      font-size: 40px;
-    }
-
-    #loadingMessage {
-      text-align: center;
-      padding: 40px;
-      background-color: #eee;
-    }
-
-    #canvas {
-      width: 100%;
-    }
-
-    #output {
-      margin-top: 20px;
-      background: #eee;
-      padding: 10px;
-      padding-bottom: 0;
-    }
-
-    #output div {
-      padding-bottom: 10px;
-      word-wrap: break-word;
-    }
-
-    #noQRFound {
-      text-align: center;
-    }
-  </style> -->
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="modal.css">
 </head>
+
 <body>
+
+  <div id="easyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-border">
+        <div class="modal-header">
+          <h1>読み取り結果</h1>
+        </div>
+        <div id="modal-body">
+
+        </div>
+        <div id="modal-footer">
+          <button class="modalClose">キャンセル</button><button id="add_to_cart" class="modalClose">次へ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <h1>SORA POS</h1>
-  <p>Pure JavaScript QR code decoding library.</p>
-  <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+  <p>QRコードをかざしてください。</p>
+  <div id="loadingMessage">🎥 カメラににアクセスできてません😥（ウェブカメラが有効になっていることを確認してください）</div>
   <canvas id="canvas" hidden></canvas>
   <div id="output" hidden>
     <div id="outputMessage">No QR code detected.</div>
     <div hidden><b>Data:</b> <span id="outputData"></span></div>
   </div>
+  <button id="buy">購入</button>
   <script>
     var video = document.createElement("video");
     var canvasElement = document.getElementById("canvas");
     var canvas = canvasElement.getContext("2d");
     var loadingMessage = document.getElementById("loadingMessage");
-    var outputContainer = document.getElementById("output");
+    var outputContainer = document.getElementById("output"); 11
     var outputMessage = document.getElementById("outputMessage");
     var outputData = document.getElementById("outputData");
+    var modalbody = document.getElementById("modal-body");
+    var addtocart = document.getElementById("add_to_cart");
+    var buybutton = document.getElementById("buy");
+    var total_amount = 0;//合計金額
+    var items_data = [];//商品情報をくっつけたもの
+    var json = JSON;
+    var wallet = JSON;//ウォレットの情報
+    console.log(json);
+    const sleep = waitTime => new Promise(resolve => setTimeout(resolve, waitTime));
 
     function drawLine(begin, end, color) {
       canvas.beginPath();
@@ -80,14 +65,81 @@
     }
 
     // カメラ画像の取得 スマホの場合は外カメラを使用する
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function (stream) {
       video.srcObject = stream;
       video.setAttribute("playsinline", true); // iOSのsafariにフルスクリーンでないことを伝えるために必要なもの
       video.play();
       requestAnimationFrame(tick);
     });
 
-    function tick() {
+
+    const modal = document.getElementById('easyModal');
+    const buttonClose = document.getElementsByClassName('modalClose')[0];
+    function modalOpen() {
+      modal.style.display = 'block';
+    }
+
+    // バツ印がクリックされた時
+    buttonClose.addEventListener('click', modalClose);
+    function modalClose() {
+      modal.style.display = 'none';
+    }
+
+    // モーダルコンテンツ以外がクリックされた時
+    addEventListener('click', outsideClose);
+    function outsideClose(e) {
+      if (e.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    //カートに追加したときの動作
+    addtocart.addEventListener('click', addToCart);
+
+    function addToCart() {
+      //合計金額をへんこう
+      total_amount += Number(json.price);
+      items_data.push(json);
+      console.log("追加成功　金額：" + total_amount);
+      console.log(items_data);
+      modalClose();
+    }
+
+    //購入ボタンが押下されたときの動作
+    buybutton.addEventListener('click', buy);
+    function buy() {
+      console.log("呼んだ？by buy");
+      if (total_amount < 0 || wallet.wallet_key == null) {
+        console.log("total:" + total_amount + "key:" + wallet.wallet_key);
+        alert("なんかたりひんで");
+
+      }
+      //コマンドの文字列を編集（現状はこの動きでいいや）
+      //const command = "{\"jsonrpc\":\"1.0\", \"method\":\"sendmoney\",\"params\":[\"" + wallet.wallet_key + "\", [{\"address\":\"netw12TDXq8r1C4o9EFbsJGhvamTKm1GkdgReek2PJZLm8fmvmD\", \"amount\":" + total_amount + ", \"message\":\"" + JSON.stringify(wallet) + "," + JSON.stringify(items_data) + "\"}]]}\' -H \'content-type: text/plain;\'";
+      const command = "{\"jsonrpc\":\"1.0\", \"method\":\"getbalancedetail\"}";
+      //コマンドをぶん投げる
+      console.log(command);
+
+      fetch('http://127.0.0.1:8000/', {
+        mode: 'cors',
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: command,
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+      //そのうち　各JSONをバックエンド側に投げ、バックエンドで正しい送金先を指定（余力ができたらそういう動きにします）
+    }
+
+    async function tick() {
       loadingMessage.innerText = "⌛ Loading video..."
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         loadingMessage.hidden = true;
@@ -117,11 +169,42 @@
           outputData.innerText = code.data;
           //QR一つ読み込んだら一旦読み込み停止
           //json形式のデータをパース
-          let item_data = JSON.parse(code.data);
-          //対応したQRかを判定・そうでなければ読み込み再開(そうでないときはそれを通知)
-          //賞味期限などの判定・問題なければ次
-          //文字列を変数に打ち込む
-          //読み込んだ商品名・価格をモーダル表示
+          try {
+            json = JSON.parse(code.data);
+            //対応したQRかを判定・そうでなければ読み込み再開(そうでないときはそれを通知)
+            if (json.data_flag == "item") {
+              console.log("スキャン成功");
+              console.log(json);
+              var test = 100 + Number(json.price);
+              console.log(test);
+              //賞味期限などの判定・問題なければ次
+              //後で作る
+
+              //文字列を変数に打ち込む
+              modalbody.innerHTML = "商品名：" + json.item_name + "<br>価格：" + json.price + "<br>賞味期限：" + json.consumed_period;
+              //読み込んだ商品名・価格をモーダル表示
+              modalOpen();
+              // requestAnimationFrame(tick);をとめるやつを後で書く
+              await sleep(3000);
+
+            } else if (json.data_flag == "wallet") {
+              wallet = json;
+              //文字列を変数に打ち込む
+              modalbody.innerHTML = "key：" + wallet.wallet_key;
+              //読み込んだ商品名・価格をモーダル表示
+              modalOpen();
+            } else {
+              outputData.innerText = "不正なQRコードです。";
+              await sleep(2000);
+              requestAnimationFrame(tick);
+            }
+          } catch (e) {
+            outputData.innerText = "jsonではありません";
+            await sleep(2000);
+            requestAnimationFrame(tick);
+          }
+
+
           //モーダルの表示からn秒経ったら読み取り再開
 
         } else {
@@ -131,6 +214,8 @@
       }
       requestAnimationFrame(tick);
     }
+
   </script>
 </body>
+
 </html>
