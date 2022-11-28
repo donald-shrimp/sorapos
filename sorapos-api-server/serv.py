@@ -11,13 +11,45 @@ CORS(
     supports_credentials=True
 )
 
-@app.route('/', methods=['POST'])
-def index():
+def send_json(json):
     # print(request.json)
     res = requests.post(
-        "http://172.28.111.26:8080",data = json.dumps(request.json)
+        "http://133.43.7.131:1234",data = json
     )
     print(res.text)
-    return "test"
+    return res.text
+
+# @app.route('/', methods=['POST'])
+def singn_in():
+    # 新規登録するときは新しくコマンドで新規ウォレットを作成し、帰ってきたウォレットIDを新規アカウントと紐づける
+    command = "{\"jsonrpc\":\"1.0\", \"method\":\"generateaddress\"}"
+    # ウォレットIDが返ってくるよ
+    wallet_id = send_json(json.dump(command))
+    # DBかなんかに登録してあげたい
+
+    return 
+
+@app.route('/payment', methods=['POST'])
+def payment():
+    # フロントからもらってきたウォレットIDと商品情報をこねこねしてコマンドを作る
+    total_amount = 0
+    for price in json[items][][price]
+        total_amount = total_amount + price
+
+    command = "{\"jsonrpc\":\"1.0\", \"method\":\"sendmoney\",\"params\":[\"送金元id\", [{\"address\":\"送金先id\", \"amount\":30, \"message\":\"ここにメッセージを書く\"}]]}"
+    return
+
+@app.route('/get_balance', methods=['GET'])
+def get_balance():
+    # ウォレットIDをもらってくる
+    wallet_id = request.args.get("wallet_id")
+    # コマンドこねこね
+    command="{\"jsonrpc\":\"1.0\", \"method\":\"getbalance\", \"params\":\"" + wallet_id + "\"}"
+    # jsonに整形したものを送信　戻り値例　balace : 1000200　こんな感じなので整形してあげたい
+    return send_json(json.dump(command))
+
+
+
+
 
 app.run(port=8000, debug=True)
