@@ -31,13 +31,15 @@ def singn_in():
 
 @app.route('/payment', methods=['POST'])
 def payment():
-    # フロントからもらってきたウォレットIDと商品情報をこねこねしてコマンドを作る
+     # フロントからもらってきたウォレットIDと商品情報をこねこねしてコマンドを作る
     total_amount = 0
-    for price in json[items][][price]
-        total_amount = total_amount + price
-
-    command = "{\"jsonrpc\":\"1.0\", \"method\":\"sendmoney\",\"params\":[\"送金元id\", [{\"address\":\"送金先id\", \"amount\":30, \"message\":\"ここにメッセージを書く\"}]]}"
-    return
+    for i in range(len(json['items'])):
+        total_amount = total_amount + json['items'][i]["price"]
+    # 暫定コマンド　そのうちjsonのデータ構造を変更します
+    json['store_id']="netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF"
+    command = "{\"jsonrpc\":\"1.0\", \"method\":\"sendmoney\",\"params\":[\""+json['store_id']+"\", [{\"address\":\""+ json['store_id'] +"\", \"amount\":" + str(total_amount) + ", \"message\":\"" + str(json['items']) + "\"}]]}"
+    # トランザクションIDが返ってくるのでよしなに使う
+    return send_json(json.dump(command))
 
 @app.route('/get_balance', methods=['GET'])
 def get_balance():
