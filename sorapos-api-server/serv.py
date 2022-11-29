@@ -19,8 +19,8 @@ def send_json(json):
     print(res.text)
     return res.text
 
-# @app.route('/', methods=['POST'])
-def singn_in():
+@app.route('/sign_up', methods=['POST'])
+def singn_up():
     # 新規登録するときは新しくコマンドで新規ウォレットを作成し、帰ってきたウォレットIDを新規アカウントと紐づける
     command = "{\"jsonrpc\":\"1.0\", \"method\":\"generateaddress\"}"
     # ウォレットIDが返ってくるよ
