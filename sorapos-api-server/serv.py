@@ -10,17 +10,17 @@ CORS(
     app,
     supports_credentials=True
 )
-
+@app.route('/', methods=['POST'])
 def send_json(json):
     # print(request.json)
     res = requests.post(
-        "http://133.43.7.131:1234",data = json
+        "http://133.43.7.131:8080",data = json
     )
     print(res.text)
     return res.text
 
 @app.route('/sign_up', methods=['POST'])
-def singn_up():
+def sign_up():
     # 新規登録するときは新しくコマンドで新規ウォレットを作成し、帰ってきたウォレットIDを新規アカウントと紐づける
     command = "{\"jsonrpc\":\"1.0\", \"method\":\"generateaddress\"}"
     # ウォレットIDが返ってくるよ

@@ -1,0 +1,51 @@
+curl http://133.43.7.131:8080/ --data-binary '{"jsonrpc":"1.0", "method":"sendmoney","params":["netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF", [{"address":"netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc", "amount":1000, "message":"ここにメッセージを書く"}]]}' -H 'content-type: text/plain;'
+
+{
+    "jsonrpc":"1.0", 
+    "method":"sendmoney",
+    "params":["netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc", 
+    [{"address":"netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF", 
+    "amount":100,
+     "message":"[{"data_flag":"item","item_category":"food","item_name":"りんご","price":"100","consumed_period":"2022/10/01","consumed_time":"16:20","purchase_store":"えびはら","weight":"100"}]"
+    }]]
+}
+
+
+"{\"jsonrpc\":\"1.0\",\"method\":\"sendmoney\",\"params\":[\"" + wallet_address + "\",[{\"address\":\"" + store_address + "\",\"amount\":" + total_amount + ",\"message\":\"" + JSON.stringify(items_data) + "\"}]]}"
+
+{"jsonrpc":"1.0","method":"sendmoney","params":["netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc",[{"address":"netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF","amount":100,"message":"data_flag: item
+item_category: food
+item_name: りんご
+price: '100'
+consumed_period: 2022/10/01
+consumed_time: '16:20'
+purchase_store: えびはら
+weight: '100'"}]]}
+
+
+{\"jsonrpc\":\"1.0\", 
+\"method\":\"sendmoney\",
+\"params\":[\"送金元id\", 
+[{\"address\":\"送金先id\", 
+\"amount\":30, 
+\"message\":\"ここにメッセージを書く\"}]]}
+
+
+
+
+
+
+
+curl http://133.43.7.131:8080/ --data-binary '{"jsonrpc":"1.0","method":"sendmoney","params":["netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc",[{"address":"netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF","amount":100,"message":"a"}]]}' -H 'content-type: text/plain;'
+
+
+
+
+// けっか
+127.0.0.1 - - [30/Nov/2022 14:27:25] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2022 21:15:41] "OPTIONS / HTTP/1.1" 200 -
+{'jsonrpc': '1.0', 'method': 'sendmoney', 'params': ['netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc', [{'address': 'netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF', 'amount': 100, 'message': 'W3siZGF0YV9mbGFnIjoiaXRlbSIsIml0ZW1fY2F0ZWdvcnkiOiJmb29kIiwiaXRlbV9uYW1lIjoi44KK44KT44GUIiwicHJpY2UiOiIxMDAiLCJjb25zdW1lZF9wZXJpb2QiOiIyMDIyLzEwLzAxIiwiY29uc3VtZWRfdGltZSI6IjE2OjIwIiwicHVyY2hhc2Vfc3RvcmUiOiLjgYjjgbPjga/jgokiLCJ3ZWlnaHQiOiIxMDAifV0='}]]}
+91386a246d4239cd6ccb74e8ee4886e1676177055fc64a595c273557129a809d
+
+
+curl http://133.43.7.131:8080/ --data-binary '{"jsonrpc":"1.0", "method":"showtransaction","params":"91386a246d4239cd6ccb74e8ee4886e1676177055fc64a595c273557129a809d"}' -H 'content-type: text/plain;'

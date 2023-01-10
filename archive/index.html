@@ -52,6 +52,8 @@
     var items_data = [];//商品情報をくっつけたもの
     var json = JSON;
     var wallet = JSON;//ウォレットの情報
+    var wallet_address = 'netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc';
+    var store_address = 'netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF';//支払先の情報（海老原商店）
     console.log(json);
     const sleep = waitTime => new Promise(resolve => setTimeout(resolve, waitTime));
 
@@ -109,14 +111,18 @@
     buybutton.addEventListener('click', buy);
     function buy() {
       console.log("呼んだ？by buy");
-      if (total_amount < 0 || wallet.wallet_key == null) {
-        console.log("total:" + total_amount + "key:" + wallet.wallet_key);
+      if (total_amount < 0 || wallet_address == null) {
+        console.log("total:" + total_amount + "key:" + wallet_address);
         alert("なんかたりひんで");
 
       }
       //コマンドの文字列を編集（現状はこの動きでいいや）
-      //const command = "{\"jsonrpc\":\"1.0\", \"method\":\"sendmoney\",\"params\":[\"" + wallet.wallet_key + "\", [{\"address\":\"netw12TDXq8r1C4o9EFbsJGhvamTKm1GkdgReek2PJZLm8fmvmD\", \"amount\":" + total_amount + ", \"message\":\"" + JSON.stringify(wallet) + "," + JSON.stringify(items_data) + "\"}]]}\' -H \'content-type: text/plain;\'";
-      const command = "{\"jsonrpc\":\"1.0\", \"method\":\"getbalancedetail\"}";
+      console.log()
+      console.log(JSON.stringify(items_data))
+      console.log(items_data)
+      // const command = '{"jsonrpc":"1.0","method":"sendmoney","params":["netw13GvoCw4doStQYXi7jveNgvKG78ijUUeopsVmBMQiAp9NKc",[{"address":"netw12VFfixARNe5HhjAPog8sfFgNdZRL2Scfx3VyME5vhdEHfF","amount":100,"message":"b"}]]}';
+      const command = "{\"jsonrpc\":\"1.0\",\"method\":\"sendmoney\",\"params\":[\"" + wallet_address + "\",[{\"address\":\"" + store_address + "\",\"amount\":" + String(total_amount) + ",\"message\":\"" + window.btoa(unescape(encodeURIComponent(JSON.stringify(items_data)))) + "\"}]]}";
+      // const command = "{\"jsonrpc\":\"1.0\", \"method\":\"getbalancedetail\"}";
       //コマンドをぶん投げる
       console.log(command);
 
