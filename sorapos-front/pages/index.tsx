@@ -1,8 +1,8 @@
 import { useState } from "react";
 import BaseLayout from "../components/BaseLayout";
 import Image from 'next/image'
-export default function Home() {
 
+export default function Home() {
   const [balance, setbalance] = useState(2048);
 
   return (
@@ -10,7 +10,7 @@ export default function Home() {
     <div className="flex flex-col h-full">
       <div className="flex justify-center text-center items-center flex-[0.5]">
         <div>
-          <h1 className="text-2xl" >残高i</h1>
+          <h1 className="text-2xl" >残高</h1>
           <p className="text-4xl">
             {balance} <span className="text-2xl">sora</span>
           </p>
@@ -26,8 +26,6 @@ export default function Home() {
         </div>
       </div>
     </div>
-     
-     
     </BaseLayout>
   );
 }

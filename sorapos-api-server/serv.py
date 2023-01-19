@@ -10,6 +10,7 @@ CORS(
     app,
     supports_credentials=True
 )
+
 @app.route('/', methods=['POST'])
 def send_json(json):
     # print(request.json)
@@ -49,9 +50,6 @@ def get_balance():
     command="{\"jsonrpc\":\"1.0\", \"method\":\"getbalance\", \"params\":\"" + wallet_id + "\"}"
     # jsonに整形したものを送信　戻り値例　balace : 1000200　こんな感じなので整形してあげたい
     return send_json(json.dump(command))
-
-
-
 
 
 app.run(port=8000, debug=True)
