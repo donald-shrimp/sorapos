@@ -1,66 +1,70 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import jsqr, { QRCode } from '../lib/jsQR';
-export type { QRCode } from 'jsQR';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import jsqr, { QRCode } from "../lib/jsQR";
+export type { QRCode } from "jsQR";
 
 export type QRReaderProps = {
-  width?: number,
-  height?: number,
-  pause?: boolean,
-  showQRFrame?: boolean,
-  timerInterval?: number,
-  gecognizeCallback?: (e: QRCode) => void,
-}
+  width?: number;
+  height?: number;
+  pause?: boolean;
+  showQRFrame?: boolean;
+  timerInterval?: number;
+  gecognizeCallback?: (e: QRCode) => void;
+};
 
 type Point = {
   x: number;
   y: number;
-}
+};
 
 type OverlayPosition = {
-  top: number,
-  left: number,
-  width: number,
-  height: number,
-}
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
 
 const RelativeWrapperDiv = styled.div<QRReaderProps>`
   position: relative;
-  width : ${(props) => props.width}px;
+  width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
 `;
 
 const VideoArea = styled.video`
-  position: absolute; 
-  z-index : -100;
+  position: absolute;
+  z-index: -100;
 `;
 
 const OverlayDiv = styled.div<OverlayPosition>`
-  position: absolute; 
-  border: 1px solid #F00;
-  top   : ${(props) => props.top}px;
-  left  : ${(props) => props.left}px;
-  width : ${(props) => props.width}px;
+  position: absolute;
+  border: 1px solid #f00;
+  top: ${(props) => props.top}px;
+  left: ${(props) => props.left}px;
+  width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
 `;
 
-
 const QRReader: React.FC<QRReaderProps> = (props) => {
-  const [overlay, setOverlay] = useState({ top:0, left: 0, width: 0, height: 0 });  
+  const [overlay, setOverlay] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+  });
   const video = useRef(null as HTMLVideoElement);
   const timerId = useRef(null);
 
   const drawRect = (topLeft: Point, bottomRight: Point) => {
     setOverlay({
       top: topLeft.y < bottomRight.y ? topLeft.y : bottomRight.y,
-      left: topLeft.x < bottomRight.x ? topLeft.x :bottomRight.x,
+      left: topLeft.x < bottomRight.x ? topLeft.x : bottomRight.x,
       width: Math.abs(bottomRight.x - topLeft.x),
       height: Math.abs(bottomRight.y - topLeft.y),
     });
   };
 
   useEffect(() => {
-    (async() => {
+    (async () => {
       if (props.pause) {
         video.current.pause();
         clearInterval(timerId.current);
@@ -70,20 +74,21 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
 
       const { width, height } = props;
 
-      const constraints = { 
-        audio: false, 
+      const constraints = {
+        audio: false,
         video: {
-          facingMode: 'environment', 
-          width, 
-          height, 
-      }};
-    
+          facingMode: "environment",
+          width,
+          height,
+        },
+      };
+
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       video.current.srcObject = stream;
       video.current.play();
-  
+
       const canvas = new OffscreenCanvas(width, height);
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
 
       if (!timerId.current) {
         timerId.current = setInterval(() => {
@@ -93,9 +98,12 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
           if (qr) {
             console.log(qr.data);
             if (props.showQRFrame) {
-              drawRect(qr.location.topLeftCorner, qr.location.bottomRightCorner);
+              drawRect(
+                qr.location.topLeftCorner,
+                qr.location.bottomRightCorner
+              );
             }
-            if (props.gecognizeCallback) props.gecognizeCallback(qr);               
+            if (props.gecognizeCallback) props.gecognizeCallback(qr);
           }
         }, props.timerInterval);
       }
@@ -103,15 +111,13 @@ const QRReader: React.FC<QRReaderProps> = (props) => {
     })();
   }, [props]);
 
-
-
-  return (    
+  return (
     <RelativeWrapperDiv {...props}>
       <VideoArea ref={video}></VideoArea>
       <OverlayDiv {...overlay}></OverlayDiv>
-    </RelativeWrapperDiv>    
+    </RelativeWrapperDiv>
   );
-}
+};
 
 // propsのデフォルト値を設定
 QRReader.defaultProps = {

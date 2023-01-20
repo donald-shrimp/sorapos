@@ -1,26 +1,33 @@
 import { useState } from "react";
 import BaseLayout from "../components/BaseLayout";
-import Image from 'next/image'
+import Image from "next/image";
 import BalanceCard from "../components/BalanceCard";
+import styled from "styled-components";
+import HomeButtons from "../components/HomeButtons";
+import LargeButton from "../components/LargeButton";
 
 export default function Home() {
   const [balance, setbalance] = useState(2048);
 
   return (
     <BaseLayout>
-    <div className="flex flex-col h-full">
-
-    <BalanceCard balance={balance}/>
-      
-      <div className="flex flex-[1] justify-center ">
-        <div className="w-full flex justify-center mb-auto">
-          <a href="/charge"><Image src="/charge.svg" width={250} height={70} alt="charge" /></a>
-        </div>
-        <div className="w-full flex justify-center mb-auto">
-          <a href="/payment"><Image src="/payment.svg" width={250} height={70} alt="payment" /></a>
+      <div className="flex justify-center">
+        <div className="flex flex-col">
+          <div className="mt-[20px]">
+            <BalanceCard balance={balance} />
+          </div>
+          <div className="mt-[20px]">
+            <HomeButtons />
+          </div>
+          <div className="mt-[20px]">
+            <LargeButton
+              icon="/ic_payment.svg"
+              text="支払い"
+              onClick={() => console.log("CLICK")}
+            />
+          </div>
         </div>
       </div>
-    </div>
     </BaseLayout>
   );
 }
