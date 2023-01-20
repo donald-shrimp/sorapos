@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import jsqr, { QRCode } from '../components/jsQR';
+import jsqr, { QRCode } from '../lib/jsQR';
 export type { QRCode } from 'jsQR';
 
 export type QRReaderProps = {
